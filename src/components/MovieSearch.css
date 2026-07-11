@@ -1,0 +1,16 @@
+h1 {
+  text-align: center;
+}
+
+.searchBar {
+  text-align: center;
+}
+
+.card-body {
+  text-align: left;
+}
+
+.card-img-top {
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
