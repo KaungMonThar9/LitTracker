@@ -1,12 +1,102 @@
-import React from 'react'
-import axios from 'axios'
-import './MovieSearch.css'
-import { useState } from 'react';
+import axios from "axios";
+import "./MovieSearch.css";
+import { useState } from "react";
 
 const MovieSearch = () => {
-  return (
-    <div>MovieSearch</div>
-  )
-}
+  const [data, setData] = useState([]);
 
-export default MovieSearch
+  async function search(formData) {
+    const movieTitle = formData.get("query")?.trim();
+    const tmdbApiKey = import.meta.env.VITE_TMDB_API_KEY;
+
+    if (!movieTitle || !tmdbApiKey) {
+      setData([]);
+      return;
+    }
+
+    const options = {
+      method: "GET",
+      url: "https://api.themoviedb.org/3/search/multi",
+      params: {
+        query: movieTitle,
+        include_adult: false,
+        language: "en-US",
+        page: 1,
+      },
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${tmdbApiKey}`,
+      },
+    };
+
+    try {
+      const response = await axios.request(options);
+      const mediaResults = response.data.results ?? [];
+      setData(mediaResults.filter((media) => media.media_type !== "person"));
+    } catch (error) {
+      console.error(
+        "TMDB search failed:",
+        error.response?.data ?? error.message,
+      );
+
+      setData([]);
+    }
+  }
+
+  const listMovies = data.map((media) => {
+    const title =
+      media.title ||
+      media.name ||
+      media.original_title ||
+      media.original_name ||
+      "Untitled";
+    const date = media.release_date || media.first_air_date || "Unknown";
+    const type = media.media_type === "movie" ? "Movie" : "Series";
+
+    return (
+      <div
+        className="col-sm-6 col-lg-3 py-2"
+        key={`${media.media_type}-${media.id}`}
+      >
+        <div className="card h-100">
+          {media.poster_path && (
+            <img
+              src={`https://image.tmdb.org/t/p/w342${media.poster_path}`}
+              className="card-img-top img-fluid"
+              alt={title}
+            />
+          )}
+          <div className="card-body">
+            <b>{title}</b>
+            <br></br>
+            <br></br>
+            <p className="card-text">
+              <strong>Released:</strong> {date}
+              <br></br>
+              <strong>Type:</strong> {type}
+              <br></br>
+              <strong>Score:</strong> {media.vote_average || "N/A"}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  });
+
+  return (
+    <>
+      <h1>Movie Search</h1>
+
+      <form className="searchBar" action={search}>
+        <input type="text" placeholder="Search" name="query"></input>
+        <button type="submit">Search</button>
+      </form>
+
+      <div className="container">
+        <div className="row">{listMovies}</div>
+      </div>
+    </>
+  );
+};
+
+export default MovieSearch;
