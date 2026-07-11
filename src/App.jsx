@@ -1,7 +1,7 @@
-import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
-import BookSearch from "./components/BookSearch";
-import MovieSearch from "./components/MovieSearch";
-import "./App.css";
+import { BrowserRouter, Route, Routes, Link } from 'react-router-dom'
+import BookSearch from './components/BookSearch'
+import MovieSearch from './components/MovieSearch'
+import './App.css'
 
 function Home() {
   return <h1>Rec Page!</h1>;
