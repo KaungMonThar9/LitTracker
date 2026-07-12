@@ -2,6 +2,7 @@ import {
   createBrowserRouter,
   Link,
   Outlet,
+  redirect,
   RouterProvider,
 } from "react-router-dom";
 import BookSearch from "./components/BookSearch";
@@ -11,6 +12,16 @@ import "./App.css";
 
 function Home() {
   return <h1>Rec Page!</h1>;
+}
+
+function requireAuth() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    throw redirect("/login");
+  }
+
+  return token;
 }
 
 function Layout() {
@@ -32,12 +43,15 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
-      { path: "BookSearch", element: <BookSearch /> },
-      { path: "MovieSearch", element: <MovieSearch /> },
+      { path: "BookSearch", loader: requireAuth, element: <BookSearch /> },
+      { path: "MovieSearch", loader: requireAuth, element: <MovieSearch /> },
       {
         path: "UserList",
         element: <UserList />,
-        loader: userListLoader,
+        loader: async () => {
+          requireAuth();
+          return userListLoader();
+        },
       },
     ],
   },
