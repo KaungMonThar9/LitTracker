@@ -1,9 +1,6 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-import db from "db.js";
-
-dotenv.config();
+import db from "./db.js";
 
 var app = express();
 const PORT = process.env.PORT || 3001;
@@ -79,4 +76,6 @@ app.post("/api/media-list", async (req, res) => {
   res.status(201).json(result.rows[0]);
 });
 
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});

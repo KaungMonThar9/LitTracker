@@ -10,10 +10,6 @@ import MovieSearch from "./components/MovieSearch";
 import UserList, { userListLoader } from "./components/UserList";
 import "./App.css";
 
-function Home() {
-  return <h1>Rec Page!</h1>;
-}
-
 function requireAuth() {
   const token = localStorage.getItem("token");
 
@@ -22,6 +18,10 @@ function requireAuth() {
   }
 
   return token;
+}
+
+function Home() {
+  return <h1>Rec Page!</h1>;
 }
 
 function Layout() {
