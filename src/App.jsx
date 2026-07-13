@@ -2,12 +2,23 @@ import {
   createBrowserRouter,
   Link,
   Outlet,
+  redirect,
   RouterProvider,
 } from "react-router-dom";
 import BookSearch from "./components/BookSearch";
 import MovieSearch from "./components/MovieSearch";
 import UserList, { userListLoader } from "./components/UserList";
 import "./App.css";
+
+function requireAuth() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    throw redirect("/login");
+  }
+
+  return token;
+}
 
 function Home() {
   return <h1>Rec Page!</h1>;
@@ -32,12 +43,15 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
-      { path: "BookSearch", element: <BookSearch /> },
-      { path: "MovieSearch", element: <MovieSearch /> },
+      { path: "BookSearch", loader: requireAuth, element: <BookSearch /> },
+      { path: "MovieSearch", loader: requireAuth, element: <MovieSearch /> },
       {
         path: "UserList",
         element: <UserList />,
-        loader: userListLoader,
+        loader: async () => {
+          requireAuth();
+          return userListLoader();
+        },
       },
     ],
   },
