@@ -1,0 +1,26 @@
+.Register {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+  margin: 20px auto;
+}
+
+.Register input {
+  padding: 10px;
+  font-size: 16px;
+}
+
+h2 {
+  text-align: center;
+}
+
+.loginLink {
+  width: 300px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.loginLink a {
+  display: inline;
+}
