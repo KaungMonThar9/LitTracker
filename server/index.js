@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import bcrypt from "bcrypt";
 import db from "./db.js";
 
 var app = express();
@@ -74,6 +75,46 @@ app.post("/api/media-list", async (req, res) => {
         RETURNING *`;
   const result = await db.query(queryText, queryValues);
   res.status(201).json(result.rows[0]);
+});
+
+app.post("/api/signup", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  const existingCheck = await db.query(
+    `
+    SELECT email FROM users WHERE email=$1`,
+    [email],
+  );
+
+  if (existingCheck.rows.length > 0) {
+    return res.status(403).json({ error: "User already exists!" });
+  }
+  const passwordHash = await bcrypt.hash(password, 9);
+  const queryValues = [name, email, passwordHash];
+  const queryText = `
+  INSERT INTO users (name, email, password_hash)
+  VALUES ($1, $2, $3)
+  RETURNING *
+  `;
+  const result = await db.query(queryText, queryValues);
+  res.status(201).json(result.rows[0]);
+});
+
+app.post("/api/login-check", async (req, res) => {
+  const { email, password } = req.body;
+  const queryText = `SELECT email, password_hash FROM users
+  WHERE email = $1`;
+  const result = await db.query(queryText, [email]);
+  if (result.rows.length == 0) {
+    return res.status(400).json({ error: "No such user exists!" });
+  }
+  const user = result.rows[0];
+  const check = await bcrypt.compare(password, user.password_hash);
+  if (check == false) {
+    return res.status(400).json({ error: "Wrong password!" });
+  } else {
+    return res.status(200).json("Welcome!");
+  }
 });
 
 app.listen(PORT, () => {

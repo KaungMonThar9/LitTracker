@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import BookSearch from "./components/BookSearch";
 import MovieSearch from "./components/MovieSearch";
+import Login from "./components/Login";
+import Register from "./components/Register";
 import UserList, { userListLoader } from "./components/UserList";
 import "./App.css";
 
@@ -53,6 +55,8 @@ const router = createBrowserRouter([
           return userListLoader();
         },
       },
+      { path: "Login", element: <Login /> },
+      { path: "Register", element: <Register /> },
     ],
   },
 ]);

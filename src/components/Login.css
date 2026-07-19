@@ -1,0 +1,28 @@
+.loginTitle {
+  width: 300px;
+  margin: 20px auto 0;
+  text-align: center;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+  margin: 20px auto;
+}
+
+.loginForm input {
+  padding: 10px;
+  font-size: 16px;
+}
+
+.registerLink {
+  width: 300px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.registerLink a {
+  display: inline;
+}
