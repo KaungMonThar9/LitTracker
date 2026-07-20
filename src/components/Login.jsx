@@ -37,6 +37,8 @@ const Login = () => {
     <>
       <h2 className="loginTitle">Login</h2>
 
+      {serverMessage && <p className="authMessage">{serverMessage}</p>}
+
       <form className="loginForm" onSubmit={handleSubmit(onSubmit)}>
         <input
           type="email"
