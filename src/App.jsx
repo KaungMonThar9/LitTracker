@@ -4,6 +4,7 @@ import {
   Outlet,
   redirect,
   RouterProvider,
+  useNavigate,
 } from "react-router-dom";
 import BookSearch from "./components/BookSearch";
 import MovieSearch from "./components/MovieSearch";
@@ -12,11 +13,12 @@ import Register from "./components/Register";
 import UserList, { userListLoader } from "./components/UserList";
 import "./App.css";
 
-function requireAuth() {
+function requireAuth(request) {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    throw redirect("/login");
+    const url = new URL(request.url);
+    throw redirect(`/Login?redirectTo=${url.pathname}`);
   }
 
   return token;
@@ -27,12 +29,21 @@ function Home() {
 }
 
 function Layout() {
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    navigate("/Login");
+  }
   return (
     <>
       <nav>
         <Link to="/">Home</Link> | <Link to="/BookSearch">Book Search</Link> |{" "}
         <Link to="/MovieSearch">Movie Search</Link> |{" "}
         <Link to="/UserList">Your List</Link> |{" "}
+        <button type="button" onClick={handleLogout}>
+          Logout
+        </button>
       </nav>
       <Outlet />
     </>
@@ -45,13 +56,21 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
-      { path: "BookSearch", loader: requireAuth, element: <BookSearch /> },
-      { path: "MovieSearch", loader: requireAuth, element: <MovieSearch /> },
+      {
+        path: "BookSearch",
+        loader: ({ request }) => requireAuth(request),
+        element: <BookSearch />,
+      },
+      {
+        path: "MovieSearch",
+        loader: ({ request }) => requireAuth(request),
+        element: <MovieSearch />,
+      },
       {
         path: "UserList",
         element: <UserList />,
-        loader: async () => {
-          requireAuth();
+        loader: async ({ request }) => {
+          requireAuth(request);
           return userListLoader();
         },
       },
