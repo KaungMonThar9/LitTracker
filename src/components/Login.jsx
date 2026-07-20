@@ -1,10 +1,12 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import "./Login.css";
 
 const Login = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [serverMessage, setServerMessage] = useState("");
   const {
     register,
@@ -16,8 +18,14 @@ const Login = () => {
     setServerMessage("");
 
     try {
-      const message = await getEmailFromDatabase(data.email, data.password);
-      setServerMessage(message);
+      const userData = await getEmailFromDatabase(data.email, data.password);
+      localStorage.setItem("token", userData.token);
+      setServerMessage(userData.message);
+      const redirectTo = searchParams.get("redirectTo") || "/";
+
+      setTimeout(() => {
+        navigate(redirectTo);
+      }, 1000);
     } catch (error) {
       setServerMessage(
         error.response?.data?.error || "Login failed. Please try again.",
@@ -28,8 +36,6 @@ const Login = () => {
   return (
     <>
       <h2 className="loginTitle">Login</h2>
-
-      {serverMessage && <p className="authMessage">{serverMessage}</p>}
 
       <form className="loginForm" onSubmit={handleSubmit(onSubmit)}>
         <input
@@ -54,6 +60,7 @@ const Login = () => {
       <p className="registerLink">
         Don&apos;t have an account? <Link to="/Register">Register</Link>
       </p>
+      {serverMessage && <p className="authMessage">{serverMessage}</p>}
     </>
   );
 };
