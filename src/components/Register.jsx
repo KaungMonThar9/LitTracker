@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "./Register.css";
 
 const Register = () => {
+  const [serverMessage, setServerMessage] = useState("");
   const {
     register,
     handleSubmit,
@@ -15,29 +16,31 @@ const Register = () => {
   const passwordRegex =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
 
-  const onSubmit = (data) => {
-    const apiUrl = import.meta.env.VITE_API_URL;
-    const payload = {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-    };
-    axios
-      .post(`${apiUrl}/api/signup`, payload)
-      .then((response) => {
-        alert(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        console.log("Request completed");
-      });
+  const onSubmit = async (data) => {
+    setServerMessage("");
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const payload = {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      };
+
+      await axios.post(`${apiUrl}/api/signup`, payload);
+      setServerMessage("Registration successful!");
+    } catch (error) {
+      setServerMessage(
+        error.response?.data?.error || "Registration failed. Please try again.",
+      );
+    }
   };
 
   return (
     <>
       <h2>Registeration Form</h2>
+
+      {serverMessage && <p className="authMessage">{serverMessage}</p>}
 
       <form className="Register" onSubmit={handleSubmit(onSubmit)}>
         <input
@@ -77,7 +80,7 @@ const Register = () => {
         <input
           type="password"
           {...register("confirmPassword", {
-            required: true,
+            required: "Confirm password is mandatory",
             validate: (value) => value === password || "Passwords do not match",
           })}
           placeholder="Confirm Password"
