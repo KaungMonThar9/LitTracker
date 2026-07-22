@@ -8,6 +8,7 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [serverMessage, setServerMessage] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -36,8 +37,6 @@ const Login = () => {
   return (
     <>
       <h2 className="loginTitle">Login</h2>
-
-      {serverMessage && <p className="authMessage">{serverMessage}</p>}
 
       <form className="loginForm" onSubmit={handleSubmit(onSubmit)}>
         <input

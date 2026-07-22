@@ -58,12 +58,10 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       {
         path: "BookSearch",
-        loader: ({ request }) => requireAuth(request),
         element: <BookSearch />,
       },
       {
         path: "MovieSearch",
-        loader: ({ request }) => requireAuth(request),
         element: <MovieSearch />,
       },
       {

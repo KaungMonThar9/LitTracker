@@ -91,6 +91,7 @@ const MovieSearch = () => {
   });
 
   async function addMovie(media) {
+    const token = localStorage.getItem("token");
     const title =
       media.title || media.name || media.original_title || media.original_name;
     const media_type = media.media_type;
@@ -114,7 +115,11 @@ const MovieSearch = () => {
     };
     const apiUrl = import.meta.env.VITE_API_URL;
     await axios
-      .post(`${apiUrl}/api/media-list`, payload)
+      .post(`${apiUrl}/api/media-list`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         console.log(response.data);
       })

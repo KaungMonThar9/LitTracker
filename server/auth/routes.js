@@ -13,7 +13,7 @@ function createToken(user) {
   );
 }
 
-app.post("/api/signup", async (req, res) => {
+router.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -45,7 +45,7 @@ app.post("/api/signup", async (req, res) => {
   }
 });
 
-app.post("/api/login-check", async (req, res) => {
+router.post("/login-check", async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -76,4 +76,4 @@ app.post("/api/login-check", async (req, res) => {
   }
 });
 
-export default createToken;
+export default router;
