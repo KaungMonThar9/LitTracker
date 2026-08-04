@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import "./Chatbot.css";
 
 const Chatbot = () => {
@@ -22,28 +23,65 @@ const Chatbot = () => {
     }
   }, []);
 
-  function handleSend(event) {
+  async function handleSend(event) {
     event.preventDefault();
 
     if (!input.trim()) return;
 
+    const userInquiry = input.trim();
+    const loadingMessageId = crypto.randomUUID();
+
     const userMessage = {
       role: "user",
-      text: input.trim(),
+      text: userInquiry,
     };
 
-    const assistantMessage = {
+    const loadingMessage = {
+      id: loadingMessageId,
       role: "assistant",
-      text: "Recommendation assistant coming soon.",
+      isLoading: true,
     };
 
     setMessages((currentMessages) => [
       ...currentMessages,
       userMessage,
-      assistantMessage,
+      loadingMessage,
     ]);
-
     setInput("");
+
+    const assistantMessageText = await chatResponseLoader(userInquiry);
+
+    setMessages((currentMessages) =>
+      currentMessages.map((message) =>
+        message.id === loadingMessageId
+          ? { role: "assistant", text: assistantMessageText }
+          : message,
+      ),
+    );
+  }
+
+  async function chatResponseLoader(userInquiry) {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return "Please log in to use personalized recommendations!";
+    }
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const response = await axios.post(
+        `${apiUrl}/api/chat-response`,
+        { message: userInquiry },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      return response.data ?? "Response failed, please try again!";
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -67,8 +105,19 @@ const Chatbot = () => {
 
           <div className="chatMessages">
             {messages.map((message, index) => (
-              <div key={index} className={`chatMessage ${message.role}`}>
-                {message.text}
+              <div
+                key={message.id ?? index}
+                className={`chatMessage ${message.role}`}
+              >
+                {message.isLoading ? (
+                  <span className="typingDots" aria-label="Assistant is typing">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                ) : (
+                  message.text
+                )}
               </div>
             ))}
           </div>

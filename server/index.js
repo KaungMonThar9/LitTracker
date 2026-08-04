@@ -3,9 +3,13 @@ import cors from "cors";
 import db from "./db.js";
 import authRoutes from "./auth/routes.js";
 import jwt from "jsonwebtoken";
+import OpenAI from "openai";
+import "dotenv/config";
 
 var app = express();
 const PORT = process.env.PORT || 3001;
+
+const client = new OpenAI();
 
 app.use(cors());
 app.use(express.json());
@@ -110,6 +114,33 @@ app.post("/api/media-list", async (req, res) => {
     }
 
     return res.status(500).json({ error: "Failed to add media item" });
+  }
+});
+
+app.post("/api/chat-response", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ error: "Missing token" });
+    }
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userInquiry = req.body.message;
+    const response = await client.responses.create({
+      model: "gpt-5-mini",
+      instructions:
+        "You are a literature and media fanatic, with your expertise spanning all kinds of media from anime to movies to webnovels, any kind of media to exist. Reply in a cheery enthusiastic tone whenever the user asks for anything.",
+      input: userInquiry,
+    });
+
+    res.status(200).json(response.output_text);
+  } catch (error) {
+    console.error(error);
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    return res.status(500).json({ error: "Failed to get a response!" });
   }
 });
 
