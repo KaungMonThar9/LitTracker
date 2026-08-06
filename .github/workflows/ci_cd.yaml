@@ -1,0 +1,38 @@
+name: CI/CD
+
+on: 
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# change ubuntu model later for consistency
+jobs:
+  test:
+    runs-on: ubuntu-latest 
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+
+      with:
+        node-version: 22
+        cache: npm
+
+      name: Install Dependencies
+      run: npm ci
+
+      name: Install playwright browsers
+      run: npx playwright install --with-deps
+
+      name: Run lint
+      run: npm run lint
+
+      name: Build app
+      run: npm run build
+
+      name: Run playwright tests
+      run: npm run test:e2e
