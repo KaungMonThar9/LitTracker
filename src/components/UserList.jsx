@@ -1,22 +1,8 @@
-import axios from "axios";
 import "./UserList.css";
 import { useLoaderData } from "react-router-dom";
 
-export async function userListLoader() {
-  const token = localStorage.getItem("token");
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const response = await axios.get(`${apiUrl}/api/media-list`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data ?? [];
-}
-
 const UserList = () => {
   const data = useLoaderData();
-
   const listItems = data.map((media) => (
     <div className="col-sm-6 col-lg-3 py-2" key={media.id}>
       <div className="card h-100">

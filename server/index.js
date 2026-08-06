@@ -124,7 +124,7 @@ app.post("/api/chat-response", async (req, res) => {
       return res.status(401).json({ error: "Missing token" });
     }
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    jwt.verify(token, process.env.JWT_SECRET);
     const userInquiry = req.body.message;
     const response = await client.responses.create({
       model: "gpt-5-mini",

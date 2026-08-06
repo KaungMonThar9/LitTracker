@@ -12,9 +12,10 @@ import BookSearch from "./components/BookSearch";
 import MovieSearch from "./components/MovieSearch";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import UserList, { userListLoader } from "./components/UserList";
+import UserList from "./components/UserList";
 import Chatbot from "./components/Chatbot";
 import "./App.css";
+import { userListLoader } from "./components/UserListLoader";
 
 function requireAuth(request) {
   const token = localStorage.getItem("token");
@@ -34,7 +35,9 @@ function Home() {
 function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(localStorage.getItem("token")));
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    Boolean(localStorage.getItem("token")),
+  );
 
   useEffect(() => {
     setIsLoggedIn(Boolean(localStorage.getItem("token")));
