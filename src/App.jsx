@@ -1,4 +1,4 @@
-import {
+﻿import {
   createBrowserRouter,
   Link,
   Outlet,
@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import BookSearch from "./components/BookSearch";
 import MovieSearch from "./components/MovieSearch";
+import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import UserList from "./components/UserList";
@@ -26,10 +27,6 @@ function requireAuth(request) {
   }
 
   return token;
-}
-
-function Home() {
-  return <h1>Rec Page!</h1>;
 }
 
 function Layout() {
@@ -108,3 +105,4 @@ function App() {
 }
 
 export default App;
+
