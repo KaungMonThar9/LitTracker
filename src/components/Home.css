@@ -1,0 +1,297 @@
+﻿.homePage {
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 48px 28px 120px;
+  color: #17212b;
+}
+
+.homeIntro {
+  max-width: 720px;
+  text-align: left;
+  margin-bottom: 52px;
+}
+
+.homeKicker,
+.eyebrow {
+  margin: 0 0 10px;
+  color: #167c80;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.homeIntro h1 {
+  max-width: 680px;
+  margin: 0;
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.homeIntro > p:not(.homeKicker) {
+  max-width: 530px;
+  margin: 24px 0 0;
+  color: #596773;
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.homeActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.homeActions a {
+  padding: 10px 16px;
+  border: 1px solid #17212b;
+  color: #17212b;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.homeActions a:first-child {
+  background: #17212b;
+  color: #fff;
+}
+
+.featuredSection,
+.carouselSection {
+  margin-top: 44px;
+}
+
+.featuredSection .sectionHeading {
+  display: block;
+}
+
+.featuredSection .sectionHeading h2 {
+  margin-top: 6px;
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.sectionHeading h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  letter-spacing: 0;
+}
+
+.featuredMedia {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  background: #17212b;
+}
+
+.featuredMedia::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(11, 23, 31, 0.9), rgba(11, 23, 31, 0.15) 70%);
+  content: "";
+}
+
+.featuredMedia img {
+  display: block;
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+}
+
+.featuredOverlay {
+  position: absolute;
+  z-index: 1;
+  right: 40px;
+  bottom: 40px;
+  left: 40px;
+  max-width: 480px;
+  color: #fff;
+}
+
+.featuredOverlay .eyebrow {
+  color: #83e1d8;
+}
+
+.featuredOverlay h3 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1;
+}
+
+.featuredOverlay p:not(.eyebrow) {
+  display: -webkit-box;
+  margin: 16px 0;
+  overflow: hidden;
+  color: #dbe5e9;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.featuredOverlay span,
+.recommendationBody span {
+  color: #a9bbc2;
+  font-size: 0.9rem;
+}
+
+.carouselControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #596773;
+  font-size: 0.9rem;
+}
+
+.carouselControls button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #b9c7cc;
+  background: #fff;
+  color: #17212b;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.recommendationCard {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.75fr) 1.25fr;
+  min-height: 280px;
+  border: 1px solid #d8e0e3;
+  background: #fff;
+}
+
+.recommendationImage {
+  min-height: 280px;
+  background: #dfe9e9;
+}
+
+.recommendationImage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  object-fit: cover;
+}
+
+.recommendationBody {
+  padding: 34px 40px;
+}
+
+.recommendationBody h3,
+.recommendationBody h4 {
+  margin: 0;
+  line-height: 1.1;
+}
+
+.recommendationBody h3 {
+  color: #17212b;
+  font-size: 1.8rem;
+}
+
+.recommendationBody h4 {
+  margin-top: 18px;
+  color: #167c80;
+  font-size: 1.3rem;
+}
+
+.recommendationBody p:not(.eyebrow) {
+  max-width: 580px;
+  color: #596773;
+  line-height: 1.6;
+}
+
+.homePlaceholder {
+  display: grid;
+  min-height: 180px;
+  place-items: center;
+  border: 1px dashed #b9c7cc;
+  color: #596773;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .homePage {
+    padding: 32px 16px 96px;
+  }
+
+  .featuredMedia,
+  .featuredMedia img {
+    min-height: 460px;
+    height: 460px;
+  }
+
+  .featuredOverlay {
+    right: 22px;
+    bottom: 24px;
+    left: 22px;
+  }
+
+  .sectionHeading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .recommendationCard {
+    grid-template-columns: 1fr;
+  }
+
+  .recommendationImage,
+  .recommendationImage img {
+    min-height: 240px;
+    height: 240px;
+  }
+
+  .recommendationBody {
+    padding: 26px 22px;
+  }
+}
+
+
+
+.homeIntro {
+  margin: 0 auto 52px;
+  text-align: center;
+}
+
+.homeIntro > p:not(.homeKicker) {
+  margin: 24px auto 0;
+}
+
+.homeActions {
+  justify-content: center;
+}
+
+.featuredSection .sectionHeading {
+  display: block;
+  text-align: center;
+}
+
+.carouselSection .sectionHeading {
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.homeIntro {
+  max-width: none;
+  width: 100%;
+}
+
+.homeIntro h1 {
+  max-width: 980px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.homeIntro > p:not(.homeKicker) {
+  max-width: 720px;
+}

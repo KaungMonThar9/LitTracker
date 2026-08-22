@@ -27,7 +27,7 @@ app.get("/api/media-list", async (req, res) => {
     const userId = decoded.user_id;
     const result = await db.query(
       `
-      SELECT media_items.*
+      SELECT media_items.*, user_list_items.status, user_list_items.score, user_list_items.progress_current, user_list_items.progress_total, user_list_items.progress_unit
       FROM user_list_items
       JOIN media_items 
       ON media_items.id = user_list_items.media_item_id
@@ -42,6 +42,10 @@ app.get("/api/media-list", async (req, res) => {
     console.error(error);
     if (error.name === "JsonWebTokenError") {
       return res.status(401).json({ error: "Invalid token" });
+    } else if (error.name === "TokenExpiredError") {
+      return res
+        .status(401)
+        .json({ error: "Session expired. Please log in again." });
     }
 
     res.status(500).json({ error: "Failed to fetch media items" });
@@ -117,6 +121,92 @@ app.post("/api/media-list", async (req, res) => {
   }
 });
 
+app.patch("/api/media-list/:mediaItemId", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: "Missing token" });
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.user_id;
+    const mediaItemId = req.params.mediaItemId;
+    const { status, score, progress_current } = req.body;
+    const validStatuses = [
+      "planned",
+      "watching",
+      "completed",
+      "on_hold",
+      "dropped",
+    ];
+
+    const uuidPattern =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidPattern.test(mediaItemId)) {
+      return res.status(400).json({ error: "Invalid media item id" });
+    }
+    if (
+      status === undefined &&
+      score === undefined &&
+      progress_current === undefined
+    ) {
+      return res.status(400).json({ error: "No update fields provided" });
+    }
+    if (status !== undefined && !validStatuses.includes(status)) {
+      return res.status(400).json({ error: "Invalid status" });
+    }
+    if (
+      progress_current !== undefined &&
+      (!Number.isInteger(progress_current) || progress_current < 1)
+    ) {
+      return res.status(400).json({
+        error: "Progress must be a whole number starting at 1",
+      });
+    }
+    if (
+      score !== undefined &&
+      score !== null &&
+      (typeof score !== "number" ||
+        score < 1 ||
+        score > 10 ||
+        score * 2 !== Math.round(score * 2))
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Score must be between 1 and 10 in 0.5 increments" });
+    }
+
+    const result = await db.query(
+      "UPDATE user_list_items " +
+        "SET status = COALESCE($1, status), score = CASE WHEN $2::boolean THEN $3 ELSE score END, progress_current = CASE WHEN $4::boolean THEN $5 ELSE progress_current END " +
+        "WHERE user_id = $6 AND media_item_id = $7 " +
+        "RETURNING media_item_id, status, score, progress_current, progress_total, progress_unit",
+      [
+        status ?? null,
+        score !== undefined,
+        score ?? null,
+        progress_current !== undefined,
+        progress_current ?? null,
+        userId,
+        mediaItemId,
+      ],
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Media item is not in your list" });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    if (
+      error.name === "JsonWebTokenError" ||
+      error.name === "TokenExpiredError"
+    ) {
+      return res
+        .status(401)
+        .json({ error: "Session expired. Please log in again." });
+    }
+    res.status(500).json({ error: "Failed to update list item" });
+  }
+});
+
 app.post("/api/chat-response", async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
@@ -124,7 +214,7 @@ app.post("/api/chat-response", async (req, res) => {
       return res.status(401).json({ error: "Missing token" });
     }
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    jwt.verify(token, process.env.JWT_SECRET);
     const userInquiry = req.body.message;
     const response = await client.responses.create({
       model: "gpt-5-mini",
