@@ -25,3 +25,7 @@ dist-ssr
 .env
 
 test-results
+# Local-only database maintenance scripts
+server/backfill-media-metadata.js
+server/migrate-user-list.js
+
