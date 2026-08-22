@@ -1,13 +1,21 @@
 import axios from "axios";
+import { redirect } from "react-router";
 
 export async function userListLoader() {
   const token = localStorage.getItem("token");
   const apiUrl = import.meta.env.VITE_API_URL;
-  const response = await axios.get(`${apiUrl}/api/media-list`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  try {
+    const response = await axios.get(`${apiUrl}/api/media-list`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data ?? [];
+  } catch (error) {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
 
-  return response.data ?? [];
+      throw redirect("/Login?redirectTo=/UserList");
+    }
+  }
 }

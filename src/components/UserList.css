@@ -1,0 +1,111 @@
+.userListPage {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 48px 0 100px;
+  color: #17212b;
+}
+
+.userListHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.userListKicker {
+  margin: 0 0 8px;
+  color: #167c80;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.userListHeader h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+.listCount {
+  color: #596773;
+  font-size: 0.95rem;
+}
+
+.userListTableWrapper {
+  overflow-x: auto;
+  border: 1px solid #d8e0e3;
+  background: #fff;
+}
+
+.userListTable {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.userListTable th {
+  padding: 14px 16px;
+  border-bottom: 2px solid #17212b;
+  background: #f2f5f5;
+  color: #596773;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.userListTable td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e1e7e8;
+  vertical-align: middle;
+}
+
+.userListTable tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.userListTable tbody tr:hover {
+  background: #f8fbfb;
+}
+
+.listNumber {
+  width: 48px;
+  color: #7a8991;
+}
+
+.listTitleCell {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 260px;
+  color: #167c80;
+  font-weight: 700;
+}
+
+.listThumbnail {
+  width: 44px;
+  height: 60px;
+  flex: 0 0 auto;
+  object-fit: cover;
+}
+
+.emptyListMessage {
+  padding: 48px 24px;
+  border: 1px dashed #b9c7cc;
+  color: #596773;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .userListPage {
+    width: min(100% - 32px, 1180px);
+    padding-top: 32px;
+  }
+
+  .userListHeader {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+

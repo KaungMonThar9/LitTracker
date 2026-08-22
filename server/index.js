@@ -42,6 +42,10 @@ app.get("/api/media-list", async (req, res) => {
     console.error(error);
     if (error.name === "JsonWebTokenError") {
       return res.status(401).json({ error: "Invalid token" });
+    } else if (error.name === "TokenExpiredError") {
+      return res
+        .status(401)
+        .json({ error: "Session expired. Please log in again." });
     }
 
     res.status(500).json({ error: "Failed to fetch media items" });
