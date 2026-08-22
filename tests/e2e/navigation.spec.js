@@ -187,7 +187,9 @@ test("movie search renders mocked movie result", async ({ page }) => {
   await expect(page.getByText(/8\.4/)).toBeVisible();
 });
 
-test("user list renders mocked saved media with blank user score", async ({ page }) => {
+test("user list renders mocked saved media with blank user score", async ({
+  page,
+}) => {
   await page.route("**/api/media-list", async (route) => {
     await route.fulfill({
       status: 200,
@@ -334,5 +336,3 @@ test("adding mocked book sends media-list POST request", async ({ page }) => {
   expect(postBody.external_id).toBe("book-1");
   expect(authHeader).toBe("Bearer fake-token");
 });
-
-
