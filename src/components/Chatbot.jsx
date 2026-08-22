@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./Chatbot.css";
+import ReactMarkdown from "react-markdown";
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -116,7 +117,7 @@ const Chatbot = () => {
                     <span></span>
                   </span>
                 ) : (
-                  message.text
+                  <ReactMarkdown>{message.text}</ReactMarkdown>
                 )}
               </div>
             ))}
