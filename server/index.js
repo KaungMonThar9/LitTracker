@@ -220,6 +220,128 @@ app.post("/api/chat-response", async (req, res) => {
     if (userInquiry === null || userInquiry === "") {
       return res.status(400).json({ error: "Message is required" });
     }
+
+    const mediaSearchTerms = [
+      // Recommendations and discovery
+      "recommend",
+      "recommendation",
+      "suggest",
+      "suggestion",
+      "find me",
+      "looking for",
+      "search for",
+      "what should i",
+      "give me",
+      "anything like",
+      "something like",
+      "similar to",
+      "more like",
+      "closest to",
+
+      // Media actions
+      "watch",
+      "watching",
+      "watched",
+      "read",
+      "reading",
+      "play",
+      "listen",
+      "view",
+
+      // Media types
+      "book",
+      "books",
+      "novel",
+      "manga",
+      "manhwa",
+      "anime",
+      "show",
+      "shows",
+      "series",
+      "tv",
+      "movie",
+      "movies",
+      "film",
+      "films",
+      "webnovel",
+      "comic",
+      "comics",
+      "game",
+      "games",
+
+      // Media attributes
+      "genre",
+      "genres",
+      "comedy",
+      "romance",
+      "fantasy",
+      "horror",
+      "thriller",
+      "action",
+      "drama",
+      "sci-fi",
+      "science fiction",
+      "psychological",
+      "isekai",
+      "superhero",
+      "crime",
+      "mystery",
+
+      // Comparison and opinions
+      "liked",
+      "like",
+      "enjoyed",
+      "favorite",
+      "favourite",
+      "dislike",
+      "hated",
+      "similar",
+      "compare",
+      "comparison",
+      "better than",
+      "worth watching",
+      "worth reading",
+    ];
+
+    const normalizedInquiry = userInquiry.toLowerCase();
+
+    const needsMediaSearch = mediaSearchTerms.some((term) =>
+      normalizedInquiry.includes(term),
+    );
+
+    let retrievedMediaStr = "No strongly relevant media was found.";
+    if (needsMediaSearch) {
+      const embedding = await client.embeddings.create({
+        model: "text-embedding-3-small",
+        input: normalizedInquiry,
+      });
+      const queryEmbedding = embedding.data[0].embedding;
+
+      const queryVector = `[${queryEmbedding.join(",")}]`;
+
+      const searchResults = await db.query(
+        `
+        SELECT media_items.*,
+        media_embeddings.embedding <=> $1::vector AS distance
+        FROM media_embeddings
+        JOIN media_items
+        ON media_items.id = media_embeddings.media_item_id  
+        WHERE NOT EXISTS (
+        SELECT 1 
+        FROM user_list_items
+        WHERE user_list_items.user_id = $2
+        AND user_list_items.media_item_id = media_items.id
+        )
+        ORDER BY media_embeddings.embedding <=> $1::vector
+        LIMIT 5
+        `,
+        [queryVector, userId],
+      );
+      const results = searchResults.rows;
+      const relevantMedia = results.filter((item) => item.distance <= 0.4);
+      retrievedMediaStr = JSON.stringify(relevantMedia);
+    }
+
     const userInfo = await db.query(
       `
       SELECT media_items.*, user_list_items.score,
@@ -260,6 +382,12 @@ app.post("/api/chat-response", async (req, res) => {
         - If a request is clearly unrelated to media, politely explain that you specialize in media assistance.
         - If the request is unclear, ask a brief follow-up question instead of guessing.
 
+        ##Relevant Media Vector Results
+        If the database returned strongly relevant media, there is no need to 
+        search for relevant media on your own and burn through tokens. If there is < 3 relevant media,
+        find until you reach a total of 3 relevant media. 
+
+        PREVIOUS CONVERSATION CONTEXT:
         ## Saved media reference data
         The user's saved media list is provided separately with every request.
         Use it to personalize recommendations.
@@ -349,6 +477,12 @@ app.post("/api/chat-response", async (req, res) => {
         CURRENT USER MESSAGE:
         ${userInquiry}
 
+<<<<<<< HEAD
+        RETRIEVED RELEVANT MEDIA:
+        ${retrievedMediaStr}
+
+=======
+>>>>>>> main
         SAVED MEDIA REFERENCE DATA:
         ${userInfoStr}
 
