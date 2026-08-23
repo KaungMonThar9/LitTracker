@@ -477,12 +477,9 @@ app.post("/api/chat-response", async (req, res) => {
         CURRENT USER MESSAGE:
         ${userInquiry}
 
-<<<<<<< HEAD
         RETRIEVED RELEVANT MEDIA:
         ${retrievedMediaStr}
 
-=======
->>>>>>> main
         SAVED MEDIA REFERENCE DATA:
         ${userInfoStr}
 
