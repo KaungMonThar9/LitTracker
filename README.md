@@ -169,8 +169,5 @@ In progress / future work:
 
 - Improve frontend styling and layout
 - Add clearer loading and success states
-- Add remove-from-list support
-- Move external API calls fully behind the backend for production
 - Build a richer homepage with user-based recommendations
-- Deploy frontend and backend
-- Add CI/CD checks
+
